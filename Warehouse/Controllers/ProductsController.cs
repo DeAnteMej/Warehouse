@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Omu.ValueInjecter;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -20,7 +21,7 @@ namespace Warehouse.Controllers
             var list = db.Products.ToList();
             if (ControllerContext.IsChildAction)
             {
-                return PartialView("_ProductTable",list);
+                return PartialView("_ProductTable", list);
             }
             else
             {
@@ -80,7 +81,22 @@ namespace Warehouse.Controllers
             {
                 return HttpNotFound();
             }
-            return View(product);
+
+            //B 2018-05-31 - Ej kunna ändra på Quantity
+            //Installera NUGET "valueinjecter"
+            var productEdit = Mapper.Map<ProductEditViewModel>(product);
+
+            //var productEdit = new ProductEditViewModel
+            //{
+            //    Id = product.Id,
+            //    Name = product.Name,
+            //    Price = product.Price,
+            //    Category = product.Category,
+            //    Description = product.Description,
+            //};
+
+            return View(productEdit);
+            //E 2018-05-31 - Ej kunna ändra på Quantity
         }
 
         // POST: Products/Edit/5
@@ -88,16 +104,29 @@ namespace Warehouse.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Price,Quantity,Category,Description")] Product product)
+        public ActionResult Edit(ProductEditViewModel productEdit)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            //2018-05-31 - Ej kunna ändra på Quantity
+            if (!ModelState.IsValid) return View(productEdit);
 
-            return View(product);
+            //Installera NUGET "valueinjecter"
+            var product = Mapper.Map<Product>(productEdit);
+
+            //var product = new Product
+            //{
+            //    Id = productEdit.Id,
+            //    Name = productEdit.Name,
+            //    Price = productEdit.Price,
+            //    Category = productEdit.Category,
+            //    Description = productEdit.Description,
+            //};
+
+            db.Entry(product).State = EntityState.Modified;
+            db.Entry(product).Property(p => p.Quantity).IsModified = false;
+            //E 2018-05-31 - Ej kunna ändra på Quantity
+
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Products/Delete/5
