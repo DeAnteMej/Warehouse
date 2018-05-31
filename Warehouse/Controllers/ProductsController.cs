@@ -17,8 +17,15 @@ namespace Warehouse.Controllers
         // GET: Products
         public ActionResult Index()
         {
-
-            return View(db.Products.ToList());
+            var list = db.Products.ToList();
+            if (ControllerContext.IsChildAction)
+            {
+                return PartialView("_ProductTable",list);
+            }
+            else
+            {
+                return View(list);
+            }
         }
 
         // GET: Products/Details/5
@@ -54,7 +61,8 @@ namespace Warehouse.Controllers
                 db.Products.Add(product);
                 db.SaveChanges();
                 //return RedirectToAction("Index");
-                return RedirectToAction("Details", new { product.Id });
+                //return RedirectToAction("Details", new { product.Id });
+                return RedirectToAction("Index", new { product.Id });
             }
 
             return View(product);
@@ -88,6 +96,7 @@ namespace Warehouse.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(product);
         }
 

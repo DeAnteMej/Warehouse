@@ -1,14 +1,5 @@
 ﻿@model IEnumerable<Warehouse.Models.Product>
 
-@{
-    ViewBag.Title = "Products";
-}
-
-<h2>Products</h2>
-
-<p>
-    @Html.ActionLink("Add new product", "Create")
-</p>
 <table class="table">
     <tr>
         <th>@Html.DisplayNameFor(model => model.Name)    </th>
@@ -18,8 +9,7 @@
         <th></th>
     </tr>
 
-@foreach (var product in Model) {
-    @Html.Partial("_ProductRow", product)
-}
-
-</table>
+    @foreach (var product in Model)
+    {
+        @Html.Partial("_ProductRow", product)
+    }

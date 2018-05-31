@@ -25,11 +25,13 @@ namespace Warehouse.Models
         [Range(1,Int32.MaxValue, ErrorMessage = "The price must be higher than 1 SEK")]
         public int Price { get; set; }
 
-        [Display(Name ="Amount i storage")]
+        [Display(Name ="Amount in storage")]
         public int Quantity { get; set; }
 
         public string Category { get; set; }
 
         public string Description { get; set; }
+
+        public DateTime Created = DateTime.Now;
     }
 }
